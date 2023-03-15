@@ -1,0 +1,21 @@
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: EC2 ASG template
+
+Resources:
+  Ec2Debian:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-07d02ee1eeb0c996c
+      InstanceType: t2.micro
+      KeyName: stelligent-u-key-pair
+      Tags:
+        - Key: "Name"
+          Value: "Nivas-ec2-debian"
+
+Outputs:
+  InstanceId:
+    Description: Instance ID of Ec2Debian Instance
+    Value: !Ref Ec2Debian
+    Export:
+      Name: !Sub "${AWS::StackName}-InstanceId"
