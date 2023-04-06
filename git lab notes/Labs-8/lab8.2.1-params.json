@@ -1,0 +1,14 @@
+[
+    {
+        "ParameterKey": "LogGroupName",
+        "ParameterValue": "NivasLogGroup"
+    },
+    {
+        "ParameterKey": "BucketName",
+        "ParameterValue": "nivas-stelligent"
+    },
+    {
+        "ParameterKey": "CloudTrailName",
+        "ParameterValue": "NivasCloudTrail"
+    }
+]

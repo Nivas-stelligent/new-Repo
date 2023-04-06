@@ -1,0 +1,15 @@
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Creates an S3 Bucket
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "nivas-stelligent-u-bucket"
+      AccessControl: "BucketOwnerFullControl"
+      Tags:
+        - Key: "user"
+          Value: "Nivas.Rajendran.labs"
+        - Key: "stelligent-u-labs"
+          Value: "8"
