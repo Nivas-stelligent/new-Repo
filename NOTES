@@ -1,0 +1,217 @@
+EC2:
+Security group block - 504 Timeout
+Elastic IP - soft limit 5 per account
+Cluster Placement Group - 10 Gbps bandwidth between instances
+Spread Placement Group - 7 instances per AZ per placement group
+Partition Placement Group - 7 partitions per AZ
+Max hibernation duration = 60 days
+64,000 EBS IOPS max on Nitro instances whereas 32,000 on non-Nitro
+4 CPU cores ⇒ 8 vCPU
+
+Lambda:
+Free tier: 1,000,000 requests and 400,000 GBs of compute time
+- RAM: 128MB (default) - 10 GB (1 MB increments)
+- Disk capacity (`/tmp`): 512 MB (free) - 10 GB
+RAM = 1,792 MB ⇒ vCPU = 1
+Timeout: default 3s, max 15 mins (900s)
+Environment variables: max 4 KB 
+- Deployment
+    - Compressed: max 50 MB
+    - Uncompressed: max 250 MB (for more use `/tmp`)
+Invoking a lambda function asynchronously returns status code 202 
+Retries: 0 - 2
+Exponential Backoff: 1 min (first retry), 2 min (second retry)
+low traffic streams - 1 lambda per shard
+high traffic streams - 10 lambdas per shard
+/tmp - free up to 512 MB, max 10 GB
+Concurrency soft limit across account: 1000 (can be raised by opening a support ticket)
+ThrottleError 429
+5 layers per function (max 250 MB total)
+
+Step Functions:
+1 state machine per workflow
+Standard Workflows: Max duration: 1 year -  2,000 workflow executions per sec - history retained 90 days in the console
+Express Workflows: Max duration: 5 min - 100,000 workflow executions per sec 
+
+VPC:
+5 VPCs per region
+AWS reserves 5 IP addresses (first 4 & last 1) in each subnet.
+NACL Rules - Rules number: 1-32766 (lower number has higher precedence)
+Direct Connect (DX) - 30 days to setup
+
+ELB:
+If no targets are associated with the target groups ⇒ 503 Service Unavailable
+Targets are unreachable (possibly due to NACL or SG rules) ⇒ 504 Timeout Error
+Network Load Balancer - Lower latency ~ 100 ms (vs 400 ms for ALB) - 1 static public IP per AZ (vs a static hostname for CLB & ALB)
+Connection Draining (De-registration Delay) - Set manually (0 to 3600 seconds) (default: 300 seconds)
+
+API Gateway:
+API schema can also be defined in the OpenAPI spec - Returns 400 status code if the validation fails
+Caching API Responses - TTL: 0 s - 1 h (default 300 sec) - Cache capacity: 0.5 GB - 237 GB
+Api Gateway - Max timeout: 29 sec
+Throttling limit - 10,000 req/sec across all APIs
+429 Too Many Requests error in case of throttling
+
+ECS:
+ontainer will be reached by the ALB on that random port -  Set the host port as 0
+Fargate Tasks: lifecycle of the ECS task [20 GiB (default) - 200 GiB]
+Only 1 IAM Role can be defined per Task Definition.
+ASG goes into cooldown period (default 300 seconds) 
+
+Elastic Beanstalk:
+Up to 1000 application version deployed simultaneously
+source bundle Not exceed 512 MB
+
+Cognito:
+dataset can have a maximum size of 1 MB
+can associate up to 20 datasets with an identity
+Inline Policy - Max 2KB in size
+
+STS:
+grant limited and temporary access (15 min - 1 hour)
+
+KMS:
+Encrypt up to 4KB of data per API call (if data > 4 KB, use envelope encryption)
+Customer Managed Keys - Deletion has a waiting period (pending deletion state) between 7 - 30 days (default 30 days).
+
+SSM Parameter Store:
+Standard Tier - Number of parameters: 10,000 - Max parameter size: 4KB
+Advanced Tier - Number of parameters: 100,000 - Max parameter size: 8KB
+
+Secrets Manager:
+Secrets are retained after deletion for 7 - 30 (default) days (waiting period)
+
+AWS Certificate Manager:
+ACM issued certificates are valid for 13 months
+if being used 60 days prior of expiry - automatically renew certificate
+if not, will send notifications starting at 45 days prior to the expiration date
+
+AWS Private Certificate Authority (CA):
+deploy X.509 certificates
+
+SQS:
+Max 10 messages received per batch
+- **Max message size: 256 KB**
+- **Default message retention: 4 days (max: 14 days)**
+Standard Queue - Low latency (<10 ms on publish and receive)
+FIFO Queue - 300 msg/s without batching (batch size = 1) - 3000 msg/s with batching (batch size = 10)
+De-duplication interval: 5 min
+Message Visibility Timeout - Default: 30s
+Queue Delay - Default: 0 (Max: 15 min)
+Long Polling - Polling time: 1 sec to 20 sec
+
+Kinesis:
+Data Retention: 1 day (default) to 365 days
+A record consists of a partition key and data blob (max 1MB)
+Provisioned 
+- Publishing: 1MB/sec per shard or 1000 msg/sec per shard 
+ - Consuming: 
+  Shared: 2MB/sec per shard (throughput shared between all consumers) - Limit of 5 GetRecords API calls/sec per shard - Latency ~200 ms (polling)- Returns up to 10 MB or up to 10,000 records then throttle for 5 seconds
+ -Enhanced Fanout: 2MB/sec per shard per consumer (dedicated throughput for each consumer) - Latency ~ 70 ms (event driven) - Default soft limit of 5 consumers per data stream 
+On-demand
+-Default capacity provisioned - 4 MB/sec or 4000 records/sec
+Scales automatically based on last 30 days
+Kinesis Data Firehose - Buffer size (size of the batch) - 1 MB to 128MB (default 5MB) - Buffer interval (how long to wait for buffer to fill up) - 60s to 900s (default 300s)
+MSK(Kafka) - 1 MB default (max 10 MB)
+
+EBS:
+General Purpose SSD - Storage: 1 GB - 16 TB - Max IOPS: 16,000
+gp3 - 3,000 lOPS baseline (max 16,000) - 125 MiB/s throughput (max 1000MiB/s)
+gp2 - Burst IOPS up to 3,000 - 3 IOPS per GB - Max IOPS: 16,000 (at 5,334 GB)
+Provisioned IOPS SSD - - **io1** or **io2**
+    - Storage: **4 GB - 16 TB**
+    - Max IOPS: **64,000 for Nitro EC2 instances** & **32,000 for non-Nitro**
+    - **50 lOPS per GB** (64,000 IOPS at 1,280 GB)
+    - io2 have more durability and more IOPS per GB (at the same price as io1)
+- **io2 Block Express**
+    - Storage: 4 GB - **64 TB**
+    - Sub-millisecond latency
+    - **Max IOPS: 256,000**
+    - 1000 lOPS per GB
+Hard Disk Drives (HDD)- Storage: 125 MB - 16 TB - Max throughput: 500 MB/s- Max IOPS: 500
+Cold HDD (sc1)- Max throughput: 250 MB/s - Max IOPS: 250
+
+EFS:
+- **Bursting** (default)
+    - Throughput: 50MB/s per TB
+    - Burst of up to 100MB/s.
+	
+RDS:
+DB connection is made on port 3306
+Backup retention: 7 days (max 35 days)
+Transaction logs are backed-up every 5 minutes
+Up to 5 read replicas
+Auth token is valid for 15 mins
+
+Aurora:
+Auto-scaling (max 128TB)
+Up to 15 read replicas
+- Aurora maintains 6 copies of your data across 3 AZ:
+    - 4 copies out of 6 needed for writes (can still write if 1 AZ completely fails)
+    - 3 copies out of 6 needed for reads
+Aurora Global Database 
+- 1 Primary Region (read / write)
+- Up to 5 secondary (read-only) regions
+- RTO of less than 1 minute
+
+DynamoDB:
+Maximum item size: 400 KB
+1 RCU ⇒ 1 strongly consistent read per sec or 2 eventually consistent reads per sec for an item of max size 4 KB
+1 WCU ⇒ 1 write per sec for an item of max size 1 KB
+WCU & RCU are divided evenly across partitions (10 partition & 10 RCU ⇒ 1 RCU for each partition).
+Scan - Returns up to 1 MB of data
+BatchWriteItem - Max 25 operations or max 16 MB of data written in a single API call
+BatchGetItem - Max 100 items or max 16 MB of data can be read in a single API call
+Local Secondary Index (LSI) - Max 5 LSI per table
+DynamoDB Accelerator (DAX) - Default 5 min TTL - Max 10 nodes in a cluster
+DynamoDB Streams - Data retention: 1 day
+Time To Live (TTL) - Expired items are deleted within 48 hours
+CLI Options - --page-size - default 1000 items
+Consumes twice the WCU and RCU of strongly consistent reads
+
+S3:
+Max Object Size: 5TB
+If you get a 403 Forbidden error, make sure the bucket policy allows public reads
+Standard-IA: move data into IA from Standard only after 30 days
+Glacier : 90 days
+Glacier Deep Archive: 180 days
+3,500 PUT/COPY/POST/DELETE and 5,500 GET/HEAD requests per second per prefix
+Multi-part Upload - recommended for files > 100MB - must use for files > 5GB
+S3 Transfer Acceleration -  large objects (>1GB)
+
+CloudFront:
+TTL (0 sec - 1 year) can be set by the origin using headers
+Use when getting 504 (gateway timeout) error, Origin Groups
+Max 10 encrypted field
+CloudFront Function -  Execution time < 1 ms - Max memory 2mb - Package size 10kb
+root user can manage only 2 keypairs per account 
+But in we can have upto 4 keygroups and upto 5 keypairs in each group
+
+
+ElastiCache:
+Cluster Mode Disabled - 1 primary node and up to 5 read-replicas - 1 shard only
+Cluster Mode Enabled - Each shard has 1 primary and up to 5 read-replicas - Up to 500 nodes per cluster
+
+MemoryDB:
+Ultra-fast (160 millions req/sec)
+Seamless scaling from 10 GB to 100 TB
+
+CloudWatch:
+30 dimensions per metric
+Custom Metrics - Standard: 1 min - High Resolution: 1 sec
+EC2 Monitoring - every 5 minutes - every 1 minute with detailed metric
+Logs can take up to 12 hours to become available for exporting to S3
+Alarms - min 10 sec for high resolution custom metric
+
+CloudTrail:
+Event retention: 90 days
+
+X-Ray:
+X-Ray daemon through UDP on port 2000
+
+CodeArtifact:
+A repository can have max 10 upstream repositories
+
+AWS CLI:
+Describelnstances on EC2 → 100 calls per seconds
+GetObject on S3 → 5500 GET per second per prefix
