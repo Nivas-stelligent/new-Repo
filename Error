@@ -2,3 +2,74 @@
 {"@timestamp":"2023-11-08T16:36:07.159+05:30","level":"WARN","logger_name":"org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext","message":"Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is java.lang.NullPointerException: Cannot invoke \"org.hibernate.metamodel.mapping.EmbeddableValuedModelPart.getNavigableRole()\" because \"mappingModelPart\" is null","thread_name":"main"}
 {"@timestamp":"2023-11-08T16:36:07.418+05:30","level":"ERROR","logger_name":"org.springframework.boot.SpringApplication","message":"Application run failed","stack_trace":"org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is java.lang.NullPointerException: Cannot invoke \"org.hibernate.metamodel.mapping.EmbeddableValuedModelPart.getNavigableRole()\" because \"mappingModelPart\" is null\r\n\tat org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770)\r\n\tat org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598)\r\n\tat org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520)\r\n\tat org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)\r\n\tat org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)\r\n\tat org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)\r\n\tat org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)\r\n\tat org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1158)\r\n\tat org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:932)\r\n\tat org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608)\r\n\tat org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)\r\n\tat org.springframework.boot.SpringApplication.refresh(SpringApplication.java:737)\r\n\tat org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)\r\n\tat org.springframework.boot.SpringApplication.run(SpringApplication.java:315)\r\n\tat org.springframework.boot.SpringApplication.run(SpringApplication.java:1309)\r\n\tat org.springframework.boot.SpringApplication.run(SpringApplication.java:1298)\r\n\tat com.tmobile.unifiedservices.tradeinreferenceload.TradeInReferenceLoadApplication.main(TradeInReferenceLoadApplication.java:20)\r\nCaused by: jakarta.persistence.PersistenceException: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is java.lang.NullPointerException: Cannot invoke \"org.hibernate.metamodel.mapping.EmbeddableValuedModelPart.getNavigableRole()\" because \"mappingModelPart\" is null\r\n\tat org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:421)\r\n\tat org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)\r\n\tat org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:352)\r\n\tat org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1817)\r\n\tat org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766)\r\n\t... 16 common frames omitted\r\nCaused by: java.lang.NullPointerException: Cannot invoke \"org.hibernate.metamodel.mapping.EmbeddableValuedModelPart.getNavigableRole()\" because \"mappingModelPart\" is null\r\n\tat org.hibernate.metamodel.model.domain.internal.MappingMetamodelImpl.lambda$registerEmbeddableMappingType$1(MappingMetamodelImpl.java:229)\r\n\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1511)\r\n\tat org.hibernate.boot.internal.MetadataImpl.visitRegisteredComponents(MetadataImpl.java:561)\r\n\tat org.hibernate.metamodel.model.domain.internal.MappingMetamodelImpl.registerEmbeddableMappingType(MappingMetamodelImpl.java:225)\r\n\tat org.hibernate.metamodel.model.domain.internal.MappingMetamodelImpl.finishInitialization(MappingMetamodelImpl.java:210)\r\n\tat org.hibernate.internal.SessionFactoryImpl.initializeMappingModel(SessionFactoryImpl.java:321)\r\n\tat org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:271)\r\n\tat org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:444)\r\n\tat org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1455)\r\n\tat org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)\r\n\tat org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:376)\r\n\tat org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)\r\n\t... 20 common frames omitted\r\n","thread_name":"main"}
 Disconnected 
+
+
+
+
+
+
+
+
+
+
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
+
+
+import org.hibernate.annotations.Type;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.List;
+
+@Entity(name = "ref_device_product")
+@IdClass(TradeInReferenceDataId.class)
+public class TradeInReferenceData implements Serializable {
+
+    @Column(name = "program_type", length = 15)
+    private String programType;
+
+    @Column(name= "product_attributes", columnDefinition = "json")
+    @Type(JsonType.class)
+    private ReferenceDataResponse productAttributes;
+
+    @Id
+    @Column(name = "create_dt")
+    private Timestamp createDate;
+
+    @Column(name = "update_dt")
+    private Timestamp updateDate;
+
+
+    public String getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(String programType) {
+        this.programType = programType;
+    }
+
+    public ReferenceDataResponse getProductAttributes() {
+        return productAttributes;
+    }
+
+    public void setProductAttributes(ReferenceDataResponse productAttributes) {
+        this.productAttributes = productAttributes;
+    }
+
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Timestamp updateDate) {
+        this.updateDate = updateDate;
+    }
+}
