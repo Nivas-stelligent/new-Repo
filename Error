@@ -73,3 +73,195 @@ public class TradeInReferenceData implements Serializable {
         this.updateDate = updateDate;
     }
 }
+
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.tmobile.unifiedservices</groupId>
+		<artifactId>parent-springboot</artifactId>
+		<version>1.0.37</version>
+	</parent>
+
+	<groupId>com.tmobile.unifiedservices</groupId>
+	<artifactId>unified-services--status</artifactId>
+	<version>1.0.0</version>
+	<name>Unified validate device status Batch Service</name>
+	<description>Unified 
+	</description>
+	<properties>
+		<base.package>com.tmobile.unifiedservices.batchvalidatedevicestatus</base.package>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>7.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tmobile.unifiedservices</groupId>
+			<artifactId>common-lib-sync</artifactId>
+			<version>1.1.77</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>io.micrometer</groupId>
+					<artifactId>micrometer-registry-prometheus</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/</source>
+								<source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>5.3.0</version>
+				<executions>
+					<execution>
+						<id>deepio-device-unlock-status-created-codegen</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generatorName>spring</generatorName>
+							<library>spring-boot</library>
+							<inputSpec>${project.basedir}/src/main/resources/openapi/DeviceUnlockStatusCreated.json</inputSpec>
+							<configurationFile>
+								${project.basedir}/openapi-generator-deepio-config.json
+							</configurationFile>
+							<ignoreFileOverride>
+								${project.basedir}/openapi-generator-ignore
+							</ignoreFileOverride>
+							<configOptions>
+								<generateApis>false</generateApis>
+								<generateSupportingFiles>false</generateSupportingFiles>
+								<generatePom>false</generatePom>
+								<useSwaggerAnnotations>false</useSwaggerAnnotations>
+							</configOptions>
+						</configuration>
+					</execution>
+					<execution>
+						<id>DMS-acc-unlock</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>
+								${project.basedir}/src/main/resources/openapi/dms-acc-unlockstatus_swagger.json
+							</inputSpec>
+							<generatorName>spring</generatorName>
+							<configurationFile>
+								${project.basedir}/openapi-generator-config.json
+							</configurationFile>
+							<ignoreFileOverride>
+								${project.basedir}/openapi-generator-ignore
+							</ignoreFileOverride>
+							<configOptions>
+								<generateApis>false</generateApis>
+								<generateSupportingFiles>false</generateSupportingFiles>
+								<generatePom>false</generatePom>
+								<useSwaggerAnnotations>false</useSwaggerAnnotations>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
