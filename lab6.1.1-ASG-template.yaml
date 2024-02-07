@@ -44,13 +44,14 @@ if %i%==48 goto end
 rem Press Caps Lock key
 powershell -Command "(New-Object -ComObject WScript.Shell).SendKeys('{CAPSLOCK}')"
 
-rem Perform double click (assuming left mouse button)
-powershell -Command "$wshell = New-Object -ComObject WScript.Shell; $wshell.SendKeys('^{LEFTCLICK}')"
-
 rem Wait for 300 seconds (5 minutes)
 timeout /t 300 /nobreak >nul
+
+echo 1
 
 set /a i+=1
 goto loop
 
 :end
+echo End of process.
+pause
