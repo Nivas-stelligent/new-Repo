@@ -19,3 +19,15 @@ Outputs:
     Value: !Ref Ec2Debian
     Export:
       Name: !Sub "${AWS::StackName}-InstanceId"
+
+
+
+import pyautogui,time
+
+p = pyautogui
+i= 1
+while i<48:
+    p.press('capslock')
+    p.doubleClick
+    time.sleep(300)
+    i += 1
