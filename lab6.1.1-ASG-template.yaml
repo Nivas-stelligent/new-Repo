@@ -55,3 +55,32 @@ goto loop
 :end
 echo End of process.
 pause
+
+
+
+
+
+
+import java.awt.*;
+import java.awt.event.InputEvent;
+
+public class JTime {
+public static void main(String[] args) {
+    try {
+        Robot r =new Robot();
+        int i =1;
+        while(i<400){
+            r.keyPress(20);
+            r.keyRelease(20);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                Thread.sleep(300000);
+                i++;
+        }
+    } catch (AWTException | InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+
+}
+}
